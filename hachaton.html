@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Driver App</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body { background: #f1f5f9; }
+
+    .screen { display: none; min-height: 100vh; background: white; }
+    .screen.active { display: block; }
+
+    header {
+      background: linear-gradient(135deg, #1e40af, #3b82f6);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .container { padding: 20px; max-width: 480px; margin: 0 auto; }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 15px;
+      margin: 12px 0;
+      border: none;
+      border-radius: 10px;
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-primary { background: #2563eb; color: white; }
+    .btn-success { background: #16a34a; color: white; }
+
+    .qr-box {
+      text-align: center;
+      padding: 25px 20px;
+      background: #f8fafc;
+      border-radius: 16px;
+      margin: 20px 0;
+    }
+
+    #qrCode {
+      width: 260px;
+      height: 260px;
+      margin: 20px auto;
+      padding: 15px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin: 25px 0;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+
+    .stat-amount { 
+      font-size: 26px; 
+      font-weight: bold; 
+      color: #1e40af; 
+      margin: 8px 0; 
+    }
+
+    .transaction-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 15px 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .empty { color: #888; text-align: center; padding: 30px 0; }
+  </style>
+</head>
+<body>
+
+  <!-- Screen 1: Driver Info -->
+  <div id="screen-info" class="screen active">
+    <header>
+      <h2>🚕 Driver Setup</h2>
+    </header>
+    <div class="container">
+      <h3>Enter Your Details</h3>
+      
+      <input type="text" id="fullName" placeholder="Full Name *" />
+      <input type="tel" id="phone" placeholder="Phone Number *" />
+      <input type="text" id="plateNumber" placeholder="Plate Number *" />
+      <input type="text" id="carModel" placeholder="Car Model *" />
+
+      <button class="btn btn-primary" onclick="saveDriverInfo()">Save & Generate QR Code</button>
+    </div>
+  </div>
+
+  <!-- Screen 2: Dashboard -->
+  <div id="screen-dashboard" class="screen">
+    <header>
+      <h2>Driver Dashboard</h2>
+      <p id="driverHeader" style="margin-top:8px; font-size:15px;"></p>
+    </header>
+
+    <div class="container">
+
+      <div class="qr-box">
+        <h3>Your QR Code</h3>
+        <p>Passengers scan to pay you</p>
+        <div id="qrCode">
+          <p style="color:#888;">QR Code will appear here</p>
+        </div>
+        <button class="btn btn-primary" onclick="generateNewQR()">Refresh QR Code</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat-card">
+          <p>Today's Earnings</p>
+          <div class="stat-amount" id="todayEarnings">ETB 0</div>
+        </div>
+        <div class="stat-card">
+          <p>Total Trips</p>
+          <div class="stat-amount" id="totalTrips">0</div>
+        </div>
+      </div>
+
+      <h3>Recent Payments</h3>
+      <div id="transactionsList">
+        <p class="empty">No payments received yet</p>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let driverInfo = {};
+    let transactions = [];
+    let todayEarnings = 0;
+    let totalTrips = 0;
+    function saveDriverInfo() {
+      const fullName = document.getElementById("fullName").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const plateNumber = document.getElementById("plateNumber").value.trim();
+      const carModel = document.getElementById("carModel").value.trim();
+
+      if (!fullName  !phone  !plateNumber || !carModel) {
+        alert("⚠️ Please fill in all fields!");
+        return;
+      }
+
+      driverInfo = { fullName, phone, plateNumber, carModel };
+
+      // Switch screens
+      document.getElementById("screen-info").classList.remove("active");
+      document.getElementById("screen-dashboard").classList.add("active");
+
+      initDashboard();
+    }
+
+    function generateQRCode() {
+      if (!driverInfo.phone) {
+        document.getElementById("qrCode").innerHTML = <p style="color:red;">Driver info not found</p>;
+        return;
+      }
+
+      const qrData = taxi-pay|${driverInfo.phone}|${driverInfo.plateNumber}|${Date.now()};
+      const qrContainer = document.getElementById("qrCode");
+
+      qrContainer.innerHTML = 
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(qrData)}" 
+             alt="QR Code" 
+             style="width:100%; height:100%; border-radius:8px;">
+      ;
+    }
+
+    function generateNewQR() {
+      generateQRCode();
+    }
+
+    function renderTransactions() {
+      const container = document.getElementById("transactionsList");
+
+      if (transactions.length === 0) {
+        container.innerHTML = <p class="empty">No payments received yet</p>;
+        return;
+      }
+
+      let html = "";
+      transactions.forEach(tx => {
+        html += 
+          <div class="transaction-item">
+            <div>
+              <strong>${tx.passenger}</strong><br>
+              <small>${tx.time}</small>
+            </div>
+            <div style="text-align:right;">
+              <strong style="color:#16a34a;">+ ETB ${tx.amount}</strong><br>
+              <small>✅</small>
+            </div>
+          </div>
+        ;
+      });
+      container.innerHTML = html;
+    }
+
+    function simulatePayment(passengerName, amount) {
+      const payment = {
+        passenger: passengerName,
+        amount: amount,
+        time: "Just now"
+      };
+
+      transactions.unshift(payment);
+      todayEarnings += amount;
+      totalTrips++;
+
+      document.getElementById("todayEarnings").textContent = ETB ${todayEarnings};
+      document.getElementById("totalTrips").textContent = totalTrips;
+
+      renderTransactions();
+    }
+
+    function initDashboard() {
+      document.getElementById("driverHeader").textContent = 
+        ${driverInfo.fullName} • ${driverInfo.plateNumber};
+
+      generateQRCode();
+      renderTransactions();
+
+      // Simulate a payment after 4 seconds (for testing)
+      setTimeout(() => {
+        simulatePayment("Abebe Tesfaye", 120);
+      }, 4000);
+    }
+
+    // Allow testing without filling form (for quick testing)
+    // Uncomment the line below if you want to skip form during development:
+    // window.onload = () => { driverInfo = {fullName:"Daniel Kebede", phone:"0912345678", plateNumber:"ABC-1234"}; document.getElementById("screen-info").classList.remove("active"); document.getElementById("screen-dashboard").classList.add("active"); initDashboard(); };
+  </script>
+</body>
+</html>
