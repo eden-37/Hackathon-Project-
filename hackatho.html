@@ -6,7 +6,6 @@
 <title>Driver • Cashless</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
 
@@ -31,14 +30,14 @@ body { font-family: 'Inter', sans-serif; background:#0a1428; color:white; }
 <!-- HEADER -->
 <header class="fixed top-0 w-full h-16 bg-slate-950/90 backdrop-blur-xl flex items-center px-6 border-b border-white/10">
   <div class="flex items-center gap-3">
-    <div class="text-2xl">🚖</div><h1 class="display text-2xl text-[#FCD116]">Cashless</h1>
-
+    <div class="text-2xl">🚖</div>
+    <h1 class="display text-2xl text-[#FCD116]">Cashless</h1>
   </div>
 </header>
 
 <main class="pt-20 px-5">
 
-<!-- REGISTER -->
+<!-- DRIVER SETUP -->
 <div id="screen-info" class="max-w-md mx-auto glass p-6 rounded-3xl">
   <h2 class="display text-3xl mb-6">Driver Setup</h2>
 
@@ -48,38 +47,35 @@ body { font-family: 'Inter', sans-serif; background:#0a1428; color:white; }
   <input id="car" placeholder="Car Model" class="w-full p-4 mb-6 rounded-xl bg-white/10 border border-white/10">
 
   <button onclick="saveDriverInfo()" class="w-full py-5 ethio-gradient text-black font-bold rounded-2xl text-lg">
-    Generate QR
+    Generate QR Dashboard
   </button>
 </div>
 
 <!-- DASHBOARD -->
 <div id="screen-dashboard" class="hidden max-w-md mx-auto">
 
+  <!-- DRIVER INFO -->
   <div class="glass p-6 rounded-3xl mb-6">
     <h2 id="driverName" class="display text-2xl mb-2"></h2>
     <p id="driverCar" class="text-slate-400"></p>
   </div>
 
-  <!-- QR -->
+  <!-- QR DISPLAY -->
   <div class="glass p-6 rounded-3xl text-center">
-    <h3 class="text-xl mb-4">Your QR Code</h3>
-    <div id="qrCode" class="flex justify-center"></div>
+    <h3 class="text-xl mb-4">Driver QR Codes</h3>
 
-    <button onclick="generateQRCode()" 
-      class="mt-6 w-full py-4 bg-white text-black rounded-2xl font-semibold">
-      Refresh QR
-    </button>
+    <div id="qrCode" class="flex flex-col items-center gap-6"></div>
   </div>
 
   <!-- STATS -->
   <div class="grid grid-cols-2 gap-4 mt-6">
     <div class="glass p-5 rounded-2xl text-center">
       <p class="text-slate-400 text-sm">Earnings</p>
-      <h3 id="earnings" class="text-2xl text-yellow-400">ETB 0</h3>
+      <h3 class="text-2xl text-yellow-400">ETB 0</h3>
     </div>
     <div class="glass p-5 rounded-2xl text-center">
       <p class="text-slate-400 text-sm">Trips</p>
-      <h3 id="trips" class="text-2xl">0</h3>
+      <h3 class="text-2xl">0</h3>
     </div>
   </div>
 
@@ -89,7 +85,6 @@ body { font-family: 'Inter', sans-serif; background:#0a1428; color:white; }
 
 <script>
 let driver = {};
-let qr;
 
 function saveDriverInfo() {
   const name = document.getElementById("fullName").value;
@@ -113,21 +108,26 @@ function saveDriverInfo() {
   generateQRCode();
 }
 
-// MATCH CLIENT FORMAT
+// SHOW YOUR QR IMAGES
 function generateQRCode() {
   const container = document.getElementById("qrCode");
   container.innerHTML = "";
 
-  // VERY IMPORTANT: match client scanner format
-  const qrData = `Bole|Piassa|5|12|50`;
+  container.innerHTML = `
+    <div>
+      <p class="text-sm text-slate-400 mb-2">Main QR Code</p>
+      <img src="file_000000006d7871fd9543c876a78e7893"
+           class="w-52 h-52 rounded-xl border border-white/20 mx-auto">
+    </div>
 
-  qr = new QRCode(container, {
-    text: qrData,
-    width: 220,
-    height: 220
-  });
+    <div>
+      <p class="text-sm text-slate-400 mb-2">Backup QR Code</p>
+      <img src="file_000000002b5871f8876d462cc6b4b8cd"
+           class="w-52 h-52 rounded-xl border border-white/20 mx-auto">
+    </div>
+  `;
 }
 </script>
 
 </body>
-</html> 
+</html>
