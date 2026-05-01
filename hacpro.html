@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Advanced QR Generator</title>
+
+  <link rel="stylesheet" href="hac.css">
+
+  <!-- ONLINE QR LIB -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>QR Code Generator</h1>
+
+  <div class="card">
+
+    <!-- MODE SWITCH -->
+    <select id="mode" onchange="generateQR()">
+      <option value="user">User Details</option>
+      <option value="text">Custom Text / URL</option>
+    </select>
+
+    <!-- USER FORM -->
+    <div id="userForm">
+      <input type="text" id="name" placeholder="Name">
+      <input type="text" id="id" placeholder="ID">
+      <input type="text" id="phone" placeholder="Phone">
+      <input type="text" id="email" placeholder="Email">
+    </div>
+
+    <!-- TEXT INPUT -->
+    <textarea id="customText" placeholder="Enter text or URL"></textarea>
+
+    <div class="buttons">
+      <button onclick="generateQR()">Generate</button>
+      <button onclick="downloadQR()">Download</button>
+      <button onclick="clearQR()">Clear</button>
+    </div>
+  </div>
+
+  <div class="qr-box">
+    <div id="qrcode"></div>
+  </div>
+
+</div>
+
+<script src="haca.js"></script>
+</body>
+</html>
